@@ -1,102 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:paddingHorizontal="@dimen/dimens_16dp"
-    android:paddingVertical="@dimen/dimens_4dp"
-    tools:context=".MainActivity">
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardView"
-        android:layout_width="0dp"
-        android:layout_height="150dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="@dimen/corner_radius"
-        app:cardElevation="@dimen/dimens_8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <data>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivNewsItem"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/dimens_8dp"
-                android:background="@color/purple_100"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerRound"
-                tools:src="@tools:sample/backgrounds/scenic[]" />
+    </data>
 
-            <androidx.core.widget.ContentLoadingProgressBar
-                android:id="@+id/ivLoadingProgressBar"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="@dimen/dimens_34dp"
-                android:layout_height="@dimen/dimens_34dp"
-                android:indeterminateOnly="true"
-                app:layout_constraintBottom_toBottomOf="@id/ivNewsItem"
-                app:layout_constraintEnd_toEndOf="@id/ivNewsItem"
-                app:layout_constraintStart_toStartOf="@id/ivNewsItem"
-                app:layout_constraintTop_toTopOf="@id/ivNewsItem" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/dimens_16dp"
+        android:paddingVertical="@dimen/dimens_4dp"
+        tools:context=".MainActivity">
 
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/corner_radius"
+            app:cardElevation="@dimen/dimens_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvNewsTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/dimens_12dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:textColor="@color/purple_900"
-                android:textSize="@dimen/dimens_16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/ivNewsItem"
-                app:layout_constraintTop_toTopOf="@id/ivNewsItem"
-                tools:text="@string/dummyText" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvNewsCategoryType"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/purple_500"
-                android:textSize="@dimen/dimens_12sp"
-                android:textStyle="normal"
-                app:layout_constraintEnd_toEndOf="@id/tvNewsTitle"
-                app:layout_constraintStart_toStartOf="@id/tvNewsTitle"
-                app:layout_constraintTop_toBottomOf="@id/tvNewsTitle"
-                tools:text="story" />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivNewsItem"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/dimens_8dp"
+                    android:background="@color/purple_100"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerRound"
+                    tools:src="@tools:sample/backgrounds/scenic[]" />
+
+                <androidx.core.widget.ContentLoadingProgressBar
+                    android:id="@+id/ivLoadingProgressBar"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="@dimen/dimens_34dp"
+                    android:layout_height="@dimen/dimens_34dp"
+                    android:indeterminateOnly="true"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@id/ivNewsItem"
+                    app:layout_constraintEnd_toEndOf="@id/ivNewsItem"
+                    app:layout_constraintStart_toStartOf="@id/ivNewsItem"
+                    app:layout_constraintTop_toTopOf="@id/ivNewsItem" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tvNewsPublishDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="@color/purple_500"
-                android:textSize="@dimen/dimens_16sp"
-                android:textStyle="normal"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/ivNewsItem"
-                app:layout_constraintStart_toStartOf="@id/tvNewsTitle"
-                tools:text="Nov 18 2022" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNewsTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/dimens_12dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/purple_900"
+                    android:textSize="@dimen/dimens_16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/ivNewsItem"
+                    app:layout_constraintTop_toTopOf="@id/ivNewsItem"
+                    tools:text="@string/dummyText" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNewsCategoryType"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/purple_500"
+                    android:textSize="@dimen/dimens_12sp"
+                    android:textStyle="normal"
+                    app:layout_constraintEnd_toEndOf="@id/tvNewsTitle"
+                    app:layout_constraintStart_toStartOf="@id/tvNewsTitle"
+                    app:layout_constraintTop_toBottomOf="@id/tvNewsTitle"
+                    tools:text="story" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvNewsPublishDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/purple_500"
+                    android:textSize="@dimen/dimens_12sp"
+                    android:textStyle="normal"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/ivNewsItem"
+                    app:layout_constraintStart_toStartOf="@id/tvNewsTitle"
+                    tools:text="Nov 18 2022" />
 
-    </com.google.android.material.card.MaterialCardView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
