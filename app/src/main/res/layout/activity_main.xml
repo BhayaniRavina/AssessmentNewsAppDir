@@ -15,14 +15,32 @@
         tools:viewBindingIgnore="true">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCategoryList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/dimens_16sp"
+            android:paddingVertical="@dimen/dimens_16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:itemCount="7"
+            tools:orientation="horizontal"
+            tools:listitem="@layout/item_filter" />
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvNewsItems"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:clipChildren="false"
             android:orientation="vertical"
             android:paddingTop="@dimen/dimens_8dp"
             android:paddingBottom="@dimen/dimens_24dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/rvCategoryList"
             tools:itemCount="7"
             tools:listitem="@layout/item_news" />
 

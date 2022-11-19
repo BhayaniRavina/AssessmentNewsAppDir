@@ -19,7 +19,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/dimens_150dp"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/corner_radius"
             app:cardElevation="@dimen/dimens_8dp"
