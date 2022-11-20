@@ -34,6 +34,8 @@ class NewsFilterAdapter :
         holder.viewItemFilterBinding.apply {
             tvNewsFilter.text = itemOfCategories.category
             cardViewFilter.setOnClickListener {
+
+                //cardViewFilter.setCardBackgroundColor(Color.parseColor("#934086"))
                 onItemClickListener?.let { it(itemOfCategories) }
             }
         }

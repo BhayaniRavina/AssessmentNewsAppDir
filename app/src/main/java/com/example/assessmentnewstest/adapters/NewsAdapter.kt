@@ -27,7 +27,7 @@ class NewsAdapter(
     override fun onBindViewHolder(holder: NewsItemsViewHolder, position: Int) {
         val newsItem = itemsList[position]
         holder.viewDataBinding.apply {
-            Glide.with(holder.viewDataBinding.ivNewsItem.context).load(newsItem.images?.square140).into(ivNewsItem)
+            Glide.with(holder.viewDataBinding.ivNewsItem.context).load(newsItem.images.square140).into(ivNewsItem)
             tvNewsTitle.text = newsItem.title
             tvNewsCategoryType.text = newsItem.type
             tvNewsPublishDate.text = newsItem.readablePublishedAt
@@ -45,12 +45,12 @@ class NewsAdapter(
 
     private var onItemClickListener: ((NewsResponseItem) -> Unit)? = null
 
-    override fun getFilter(): Filter? {
+    override fun getFilter(): Filter {
         return selectedCatogorysList
     }
 
     private val selectedCatogorysList: Filter = object : Filter() {
-        override fun performFiltering(constraint: CharSequence?): FilterResults? {
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
             val filteredList: MutableList<NewsResponseItem> = ArrayList()
             if (constraint == null || constraint.length == 0 || constraint.toString().lowercase().contains("all")) {
                 filteredList.addAll(fullItems)

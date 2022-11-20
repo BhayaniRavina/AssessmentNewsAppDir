@@ -8,11 +8,11 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/purple_50"
-        tools:context=".MainActivity"
-        tools:viewBindingIgnore="true">
+        tools:context=".MainActivity">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvCategoryList"
@@ -24,25 +24,49 @@
             android:paddingVertical="@dimen/dimens_16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="7"
             tools:orientation="horizontal"
             tools:listitem="@layout/item_filter" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvNewsItems"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:clipChildren="false"
             android:orientation="vertical"
-            android:paddingTop="@dimen/dimens_8dp"
-            android:paddingBottom="@dimen/dimens_24dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@+id/rvCategoryList"
-            tools:itemCount="7"
-            tools:listitem="@layout/item_news" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvNewsItems"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:clipChildren="false"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/dimens_8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="7"
+                tools:listitem="@layout/item_news" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvNoInternetConnection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/dimens_12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/purple_900"
+            android:textSize="@dimen/dimens_16sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/dummyText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

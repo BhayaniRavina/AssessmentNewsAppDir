@@ -1,4 +1,6 @@
 <resources>
-    <string name="app_name">AssessmentNewsTest</string>
+    <string name="app_name">Daily News</string>
     <string name="dummyText">An inside look at the ER of Canada\'s largest pediatric hospital as RSV surges</string>
+    <string name="internet_connected">Connected with Internet</string>
+    <string name="no_internet">No Internet</string>
 </resources>

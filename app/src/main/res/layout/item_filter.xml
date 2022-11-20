@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dimens_16sp"
-        app:cardBackgroundColor="@color/purple_200"
+        app:cardBackgroundColor="@color/purple_400"
         app:cardCornerRadius="@dimen/corner_radius"
         app:cardElevation="0dp"
         app:strokeColor="@color/purple_500"
@@ -27,6 +27,7 @@
             android:paddingVertical="@dimen/dimens_8dp"
             android:textColor="@color/white"
             android:textSize="@dimen/dimens_16sp"
+            android:textAllCaps="true"
             tools:text="jewelry" />
 
     </com.google.android.material.card.MaterialCardView>
