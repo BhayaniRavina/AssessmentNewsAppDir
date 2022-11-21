@@ -1,5 +1,6 @@
 package com.example.assessmentnewstest.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -34,10 +35,14 @@ class NewsFilterAdapter :
         holder.viewItemFilterBinding.apply {
             tvNewsFilter.text = itemOfCategories.category
             cardViewFilter.setOnClickListener {
-
-                //cardViewFilter.setCardBackgroundColor(Color.parseColor("#934086"))
                 onItemClickListener?.let { it(itemOfCategories) }
+                it.isSelected = true
+                notifyItemChanged(position)
             }
+            if(!itemOfCategories.isSelected)
+                holder.viewItemFilterBinding.cardViewFilter.setBackgroundColor(Color.parseColor("#430355"))
+            else
+                holder.viewItemFilterBinding.cardViewFilter.setBackgroundColor(Color.parseColor("#69146a"))
         }
     }
 

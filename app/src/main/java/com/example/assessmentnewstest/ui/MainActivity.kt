@@ -3,6 +3,8 @@ package com.example.assessmentnewstest.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -12,8 +14,10 @@ import android.util.Log
 import android.view.View
 import android.widget.AbsListView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -37,7 +41,6 @@ import com.example.assessmentnewstest.util.Resource
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,93 +49,103 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
     private val itemsList = ArrayList<NewsResponseItem>()
     private val fullItems = ArrayList<NewsResponseItem>()
+    private lateinit var connectivityLiveData: ConnectivityLiveData
 
     lateinit var viewModel: NewsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val actionBar: ActionBar?
+        actionBar = supportActionBar
+        val colorDrawable = ColorDrawable(Color.parseColor("#430355"))
+        actionBar?.setBackgroundDrawable(colorDrawable)
+        val newsRepository = NewsRepository(NewsDatabase(this))
+        val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
+        viewModel = ViewModelProvider(this,viewModelProviderFactory).get(NewsViewModel::class.java)
 
-        if(!isNetworkAvailable()){
-            AskToStartInternet()
-        }else{
-            val newsRepository = NewsRepository(NewsDatabase(this))
-            val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
-            viewModel = ViewModelProvider(this,viewModelProviderFactory).get(NewsViewModel::class.java)
+        setUpVerticalRecyclerView()
+        setUpHorizontalRecyclerView()
+        connectivityLiveData= ConnectivityLiveData(application)
+        connectivityLiveData.observe(this, Observer {isAvailable->
+            when(isAvailable)
+            {
+                true->Snackbar.make(binding.mainLayout, "Internet Available", Snackbar.LENGTH_LONG)
+                    .show()
+                false-> Snackbar.make(binding.mainLayout, "No Internet Connectivity", Snackbar.LENGTH_INDEFINITE)
+                    .show()
+            }
+        })
+        viewModel.allTypesNews.observe(this, androidx.lifecycle.Observer { response ->
+            when(response){
+                is Resource.Success -> {
+                    hideProgressBar()
+                    response.data?.let {
+                            newsResponse ->
+                        itemsList.clear()
+                        fullItems.clear()
+                        itemsList.addAll(newsResponse.toList())
+                        fullItems.addAll(newsResponse.toList())
+                        manageOfflineNews(newsResponse)
 
-            setUpVerticalRecyclerView()
-            setUpHorizontalRecyclerView()
+                        val categoriesList = getCategories(newsResponse)
+                        newsFilterAdapter.differ.submitList(categoriesList)
+                        newsFilterAdapter.setOnItemClickListener{
+                            newsAdapter.filter.filter(it.category)
+                        }
+                        Log.e("CategoriesTypes ", Gson().toJson(categoriesList))
 
-            viewModel.allTypesNews.observe(this, androidx.lifecycle.Observer { response ->
-                when(response){
-                    is Resource.Success -> {
-                        hideProgressBar()
-                        response.data?.let {
-                                newsResponse ->
-                            itemsList.clear()
-                            fullItems.clear()
-                            itemsList.addAll(newsResponse.toList())
-                            fullItems.addAll(newsResponse.toList())
-                            manageOfflineNews(newsResponse)
+                        val totalPages = newsResponse.size / QUERY_PAGE_SIZE + 2
+                        isLastPage = viewModel.newsPage == totalPages
 
-                            val categoriesList = getCategories(newsResponse)
-                            newsFilterAdapter.differ.submitList(categoriesList)
-                            newsFilterAdapter.setOnItemClickListener{
-                                newsAdapter.filter.filter(it.category)
-                            }
-                            Log.e("CategoriesTypes ", Gson().toJson(categoriesList))
-
-                            val totalPages = newsResponse.size / QUERY_PAGE_SIZE + 2
-                            isLastPage = viewModel.newsPage == totalPages
-
-                            if(isLastPage){
-                                binding.rvNewsItems.setPadding(0,0,0,0)
-                            }
+                        if(isLastPage){
+                            binding.rvNewsItems.setPadding(0,0,0,0)
                         }
                     }
-                    is Resource.Error -> {
-                        hideProgressBar()
-                        response.message?.let { message ->
-                            Snackbar.make(binding.root, " $message", Snackbar.LENGTH_INDEFINITE)
+                }
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let { message ->
+                        Snackbar.make(binding.mainLayout, " $message", Snackbar.LENGTH_INDEFINITE)
                                 .show()
-                            manageOfflineNews(null)
-                        }
-                    }
-                    is Resource.Loading -> {
-                        showProgressBar()
+                        manageOfflineNews(null)
                     }
                 }
-            })
-
-            val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.RIGHT
-            ){
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return true
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    //val position = viewHolder.adapterPosition
-                    /*val news = newsAdapter.itemsList[position]
-                    //viewModel.deleteNews(news)
-                    Snackbar.make(binding.root,"Successfully deleted the News",Snackbar.LENGTH_LONG).apply {
-                        setAction("Undo"){
-                            viewModel.saveNews(news)
-                        }
-                    }.show()*/
+                is Resource.Loading -> {
+                    showProgressBar()
                 }
             }
+        })
 
-            ItemTouchHelper(itemTouchHelperCallback).apply {
-                attachToRecyclerView(binding.rvNewsItems)
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.RIGHT
+        ){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
             }
 
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                //val position = viewHolder.adapterPosition
+                /*val news = newsAdapter.itemsList[position]
+                //viewModel.deleteNews(news)
+                Snackbar.make(binding.root,"Successfully deleted the News",Snackbar.LENGTH_LONG).apply {
+                    setAction("Undo"){
+                        viewModel.saveNews(news)
+                    }
+                }.show()*/
+            }
         }
+
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(binding.rvNewsItems)
+        }
+
+        //}
     }
 
     override fun onResume() {

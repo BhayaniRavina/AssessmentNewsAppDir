@@ -1,5 +1,6 @@
 package com.example.assessmentnewstest.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -18,7 +19,6 @@ class NewsAdapter(
     RecyclerView.Adapter<NewsAdapter.NewsItemsViewHolder>(), Filterable {
     inner class NewsItemsViewHolder(val viewDataBinding: ItemNewsBinding) : RecyclerView.ViewHolder(viewDataBinding.root)
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsItemsViewHolder {
         val binding = ItemNewsBinding.inflate(LayoutInflater.from(parent.context),parent,false)
         return NewsItemsViewHolder(binding)
@@ -31,10 +31,11 @@ class NewsAdapter(
             tvNewsTitle.text = newsItem.title
             tvNewsCategoryType.text = newsItem.type
             tvNewsPublishDate.text = newsItem.readablePublishedAt
-            //tvNewsPublishDate.text = newsItem?.publishedAt?.let { convertLongToTime(it) }
 
             holder.viewDataBinding.cardView.setOnClickListener {
-                onItemClickListener?.let { it(newsItem) }
+                onItemClickListener?.let {
+                    it(newsItem)
+                }
             }
         }
     }
