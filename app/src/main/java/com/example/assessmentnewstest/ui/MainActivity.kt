@@ -1,4 +1,4 @@
-package com.example.assessmentnewstest
+package com.example.assessmentnewstest.ui
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -6,19 +6,27 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assessmentnewstest.NetworkConnectivity.ConnectivityLiveData
+import com.example.assessmentnewstest.R
 import com.example.assessmentnewstest.adapters.NewsAdapter
 import com.example.assessmentnewstest.adapters.NewsFilterAdapter
 import com.example.assessmentnewstest.api.RetrofitInstance
 import com.example.assessmentnewstest.databinding.ActivityMainBinding
+import com.example.assessmentnewstest.db.NewsDatabase
 import com.example.assessmentnewstest.models.FilterCategories
 import com.example.assessmentnewstest.models.NewsResponse
 import com.example.assessmentnewstest.models.NewsResponseItem
+import com.example.assessmentnewstest.repository.NewsRepository
+import com.example.assessmentnewstest.ui.ViewModel.NewsViewModel
+import com.example.assessmentnewstest.ui.ViewModel.NewsViewModelProviderFactory
 import com.example.assessmentnewstest.util.Constants.Companion.All
+import com.example.assessmentnewstest.util.Resource
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import kotlinx.coroutines.*
@@ -28,6 +36,7 @@ import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity() {
+    private val TAG: String = "MainActivity"
     lateinit var newsAdapter: NewsAdapter
     lateinit var newsFilterAdapter: NewsFilterAdapter
     lateinit var binding: ActivityMainBinding
@@ -35,54 +44,53 @@ class MainActivity : AppCompatActivity() {
     private val fullItems = ArrayList<NewsResponseItem>()
     private lateinit var connectivityLiveData: ConnectivityLiveData
 
+    lateinit var viewModel: NewsViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
+        val newsRepository = NewsRepository(NewsDatabase(this))
+        val viewModelProviderFactory = NewsViewModelProviderFactory(newsRepository)
+        viewModel = ViewModelProvider(this,viewModelProviderFactory).get(NewsViewModel::class.java)
+
         setUpVerticalRecyclerView()
         setUpHorizontalRecyclerView()
         checkInternetConnection(isNetworkAvailable)
-        getLiveData()
+
+        viewModel.allTypesNews.observe(this, androidx.lifecycle.Observer { response ->
+            when(response){
+                is Resource.Success -> {
+                    hideProgressBar()
+                    response.data?.let {
+                        newsResponse ->
+                        itemsList.addAll(newsResponse)
+                        fullItems.addAll(newsResponse)
+
+                        val categoriesList = getCatrgories(newsResponse)
+                        newsFilterAdapter.differ.submitList(categoriesList)
+                        newsFilterAdapter.setOnItemClickListener{
+                            newsAdapter.filter.filter(it.category)
+                        }
+
+                        Log.e("CategoriesTypes ", Gson().toJson(categoriesList))
+                    }
+                }
+                is Resource.Error -> {
+                    hideProgressBar()
+                    response.message?.let { message ->
+                        Log.e(TAG, "An error occured: $message")
+                    }
+                }
+                is Resource.Loading -> {
+                    showProgressBar()
+                }
+            }
+        })
 
         binding.swipeRefreshLayout.setOnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
-            getLiveData()
-            newsAdapter.notifyDataSetChanged()
         }
-    }
-
-    private fun getLiveData() {
-        val coroutineExceptionHandler = CoroutineExceptionHandler{_, throwable ->
-            throwable.printStackTrace()
-        }
-        GlobalScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            getAllNews("news").let {
-                try{
-                    if (it.isSuccessful){
-                        Log.e("successful response: ", Gson().toJson(it.body()))
-                        GlobalScope.launch(Dispatchers.Main) {
-                            it.body()?.let { it1 ->
-                                itemsList.addAll(it1)
-                                fullItems.addAll(it1)
-                            }
-                        }
-                        val categoriesList = getCatrgories(it.body())
-                        GlobalScope.launch(Dispatchers.Main) {
-                            newsFilterAdapter.differ.submitList(categoriesList)
-                            newsFilterAdapter.setOnItemClickListener{
-                                //Toast.makeText(this@MainActivity,"Category is ${it.category}", Toast.LENGTH_LONG).show()
-                                newsAdapter.filter.filter(it.category)
-                            }
-                        }
-                        Log.e("CategoriesTypes ", Gson().toJson(categoriesList))
-                    }else{
-                        Log.e("failure response: ", Gson().toJson(it.errorBody()))
-                    }
-                }catch (ex : JSONException){
-                    ex.printStackTrace()
-                }
-            }
-        }
-
     }
 
     private fun checkInternetConnection(isNetworkAvailable: Boolean) {
@@ -111,6 +119,15 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         checkInternetConnection(isNetworkAvailable)
     }
+
+    private fun hideProgressBar() {
+        binding.paginationProgressBar.visibility = View.INVISIBLE
+    }
+
+    private fun showProgressBar() {
+        binding.paginationProgressBar.visibility = View.VISIBLE
+    }
+
     private fun getCatrgories(body: NewsResponse?) : List<FilterCategories>{
         val arrayList = ArrayList<FilterCategories>()
 
@@ -138,9 +155,6 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@MainActivity,RecyclerView.HORIZONTAL,false)
         }
     }
-
-    suspend fun getAllNews(lineupSlung : String) =
-        RetrofitInstance.api.getAllNews(lineupSlung)
 
     val isNetworkAvailable: Boolean
         get() {

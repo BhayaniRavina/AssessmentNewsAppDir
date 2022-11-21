@@ -14,7 +14,7 @@
         android:clipToPadding="false"
         android:paddingHorizontal="@dimen/dimens_16dp"
         android:paddingVertical="@dimen/dimens_4dp"
-        tools:context=".MainActivity">
+        tools:context=".ui.MainActivity">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardView"

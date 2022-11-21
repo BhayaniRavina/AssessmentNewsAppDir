@@ -1,11 +1,12 @@
 package com.example.assessmentnewstest.models
 
 import com.google.gson.annotations.SerializedName
+import androidx.room.PrimaryKey
 
-
-class NewsResponse : ArrayList<NewsResponseItem>()
-
+@androidx.room.Entity(tableName = "news")
 data class NewsResponseItem(
+    @PrimaryKey(autoGenerate = true)
+    var index: Int? = null,
     val id: Long,
     val title: String,
     val description: String,

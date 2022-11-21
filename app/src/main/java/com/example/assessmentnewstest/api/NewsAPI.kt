@@ -9,6 +9,8 @@ interface NewsAPI {
     @GET("aggregate_api/v1/items")
     suspend fun getAllNews(
         @Query("lineupSlug")
-        lineupSlug : String
+        lineupSlug : String,
+        @Query("page")
+        pageNumber: Int = 1
     ) : Response<NewsResponse>
 }
