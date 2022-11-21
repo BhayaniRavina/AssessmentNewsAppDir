@@ -1,15 +1,12 @@
 package com.example.assessmentnewstest.ui
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.AbsListView
@@ -50,22 +47,28 @@ class MainActivity : AppCompatActivity() {
     private val itemsList = ArrayList<NewsResponseItem>()
     private val fullItems = ArrayList<NewsResponseItem>()
     private lateinit var connectivityLiveData: ConnectivityLiveData
-
     lateinit var viewModel: NewsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        /* start : ActionBar color changed */
         val actionBar: ActionBar?
         actionBar = supportActionBar
         val colorDrawable = ColorDrawable(Color.parseColor("#430355"))
         actionBar?.setBackgroundDrawable(colorDrawable)
+        /* end : ActionBar color changed */
+
+        /* start : ViewModel reference */
         val newsRepository = NewsRepository(NewsDatabase(this))
         val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)
         viewModel = ViewModelProvider(this,viewModelProviderFactory).get(NewsViewModel::class.java)
+        /* end : ViewModel reference */
 
         setUpVerticalRecyclerView()
         setUpHorizontalRecyclerView()
+
+        /* start : get current network state */
         connectivityLiveData= ConnectivityLiveData(application)
         connectivityLiveData.observe(this, Observer {isAvailable->
             when(isAvailable)
@@ -76,6 +79,9 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         })
+        /* end : get current network state */
+
+        /* start : through observer retrive data from api and fetch news in a list and fill filter */
         viewModel.allTypesNews.observe(this, androidx.lifecycle.Observer { response ->
             when(response){
                 is Resource.Success -> {
@@ -116,6 +122,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        /* end : through observer retrive data from api and fetch news in a list and fill filter */
+
+        /* start : through observer retrive data from api and fetch news in a list and fill filter */
+
 
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -130,44 +140,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                //val position = viewHolder.adapterPosition
-                /*val news = newsAdapter.itemsList[position]
-                //viewModel.deleteNews(news)
-                Snackbar.make(binding.root,"Successfully deleted the News",Snackbar.LENGTH_LONG).apply {
-                    setAction("Undo"){
-                        viewModel.saveNews(news)
-                    }
-                }.show()*/
+
             }
         }
 
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(binding.rvNewsItems)
         }
-
-        //}
     }
 
     override fun onResume() {
         super.onResume()
     }
 
-    private fun AskToStartInternet() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Internet Required!")
-        builder.setMessage("Would you like to access the News App, please on the internet!")
-        builder.setPositiveButton("ALLOW") { dialog, which ->
-            startActivity(Intent(Settings.ACTION_SETTINGS))
-        }
-
-        builder.setNegativeButton("DENY") { dialog, which ->
-            Toast.makeText(applicationContext,
-                "DENY", Toast.LENGTH_SHORT).show()
-        }
-
-        builder.setCancelable(false)
-        builder.show()
-    }
+    /* start : Pagination */
 
     var isLoading = false
     var isLastPage = false
@@ -200,6 +186,9 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    /* end : Pagination */
+
+    /* start : Offline Storage */
 
     private fun manageOfflineNews(newsResponse: NewsResponse? = null) {
         viewModel.getSavedNews().observe(this, androidx.lifecycle.Observer {
@@ -233,16 +222,16 @@ class MainActivity : AppCompatActivity() {
             }else{
                 saveNews(newsResponse!!)
             }
-            })
+        })
     }
 
     private fun saveNews(newsResponse: NewsResponse) : Boolean{
         for(items in 0..newsResponse.size-1){
             viewModel.saveNews(newsResponse.get(items))
-            //Snackbar.make(binding.root, "News Saved Successfully",Snackbar.LENGTH_LONG).show()
         }
         return true
     }
+    /* start : Offline storage */
 
     private fun hideProgressBar() {
         binding.paginationProgressBar.visibility = View.INVISIBLE
@@ -254,6 +243,8 @@ class MainActivity : AppCompatActivity() {
         isLoading = true
     }
 
+
+    /* start : Create a list if categorized news */
     private fun getCategories(body: List<NewsResponseItem>) : List<FilterCategories>{
         val arrayList = ArrayList<FilterCategories>()
 
@@ -268,6 +259,7 @@ class MainActivity : AppCompatActivity() {
         arrayList.add(arrayList.size,filterCategoriesItem)
         return arrayList.distinctBy { it.category }
     }
+    /* start : Create a list if categorized news */
 
     private fun setUpVerticalRecyclerView() {
         newsAdapter = NewsAdapter(itemsList,fullItems)

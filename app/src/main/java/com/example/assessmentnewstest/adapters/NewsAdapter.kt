@@ -1,6 +1,5 @@
 package com.example.assessmentnewstest.adapters
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
@@ -46,6 +45,7 @@ class NewsAdapter(
 
     private var onItemClickListener: ((NewsResponseItem) -> Unit)? = null
 
+    /* start : Create a list if categorized news */
     override fun getFilter(): Filter {
         return selectedCatogorysList
     }
@@ -74,4 +74,5 @@ class NewsAdapter(
             notifyDataSetChanged()
         }
     }
+    /* end : Create a list if categorized news */
 }

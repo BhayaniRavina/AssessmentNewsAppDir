@@ -19,7 +19,8 @@ import java.io.IOException
 
 class NewsViewModel(
     app : Application,
-    val newsRepository: NewsRepository) : AndroidViewModel(app) {
+    val newsRepository: NewsRepository)
+    : AndroidViewModel(app) {
 
     val allTypesNews : MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var newsPage = 1
@@ -74,11 +75,11 @@ class NewsViewModel(
         }
         return false
     }
+
     private fun handleNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse>? {
         if (response.isSuccessful){
             response.body()?.let { resultResponse ->
                 newsPage++
-
                 if(newsResponse ==  null){
                     newsResponse = resultResponse
                 }else{
