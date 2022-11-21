@@ -30,26 +30,20 @@
             tools:orientation="horizontal"
             tools:listitem="@layout/item_filter" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvNewsItems"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:clipChildren="false"
             android:orientation="vertical"
+            android:paddingTop="@dimen/dimens_8dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="7"
+            tools:listitem="@layout/item_news"
             app:layout_constraintTop_toBottomOf="@+id/rvCategoryList"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvNewsItems"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:clipChildren="false"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/dimens_8dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="7"
-                tools:listitem="@layout/item_news" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvNoInternetConnection"

@@ -27,7 +27,7 @@ class NewsAdapter(
     override fun onBindViewHolder(holder: NewsItemsViewHolder, position: Int) {
         val newsItem = itemsList[position]
         holder.viewDataBinding.apply {
-            Glide.with(holder.viewDataBinding.ivNewsItem.context).load(newsItem.images.square140).into(ivNewsItem)
+            Glide.with(holder.viewDataBinding.ivNewsItem.context).load(newsItem.images?.square140).into(ivNewsItem)
             tvNewsTitle.text = newsItem.title
             tvNewsCategoryType.text = newsItem.type
             tvNewsPublishDate.text = newsItem.readablePublishedAt
@@ -57,7 +57,7 @@ class NewsAdapter(
             } else {
                 val filterPattern = constraint.toString().lowercase(Locale.getDefault()).trim { it <= ' ' }
                 for (item in fullItems) {
-                    if (item.type.lowercase().contains(filterPattern)) {
+                    if (item.type?.lowercase()?.contains(filterPattern) == true) {
                         filteredList.add(item)
                     }
                 }

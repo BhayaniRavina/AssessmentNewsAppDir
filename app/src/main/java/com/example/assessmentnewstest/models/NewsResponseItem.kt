@@ -1,28 +1,31 @@
 package com.example.assessmentnewstest.models
 
+import androidx.room.Index
 import com.google.gson.annotations.SerializedName
 import androidx.room.PrimaryKey
 
-@androidx.room.Entity(tableName = "news")
+@androidx.room.Entity(tableName = "news",
+    indices = [Index(value = ["id"],unique = true)]
+)
 data class NewsResponseItem(
     @PrimaryKey(autoGenerate = true)
     var index: Int? = null,
-    val id: Long,
-    val title: String,
-    val description: String,
-    val source: String,
-    val sourceId: String,
-    val version: String,
-    val publishedAt: Long,
-    val readablePublishedAt: String,
-    val updatedAt: Long,
-    val readableUpdatedAt: String,
-    val type: String,
-    val active: Boolean,
-    val draft: Boolean,
+    val id: Long?,
+    val title: String?,
+    val description: String?,
+    val source: String?,
+    val sourceId: String?,
+    val version: String?,
+    val publishedAt: Long?,
+    val readablePublishedAt: String?,
+    val updatedAt: Long?,
+    val readableUpdatedAt: String?,
+    val type: String?,
+    val active: Boolean?,
+    val draft: Boolean?,
     val embedTypes: String?,
-    val typeAttributes: TypeAttributes,
-    @SerializedName("images") val images: Images5,
+    val typeAttributes: TypeAttributes?,
+    @SerializedName("images") val images: Images5?,
     val language: String,
 )
 
